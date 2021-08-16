@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"net/http"
 	"net/url"
+	"os"
 
 	"github.com/gorilla/mux"
 )
@@ -18,12 +19,20 @@ type Data struct {
 func main() {
 
 	data := &Data{db: make(map[string]string)}
+
+	// SERVER
+	port := os.Getenv("PORT")
+
+	if port == "" {
+		log.Fatal("$PORT must be set")
+	}
+
 	r := mux.NewRouter()
 
 	r.HandleFunc("/", data.homepage)
 	r.HandleFunc("/to/{key}", data.redirect)
 	http.Handle("/", r)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(port, nil))
 }
 
 func short() string {
